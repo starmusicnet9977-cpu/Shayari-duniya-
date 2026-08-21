@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>शायरी दुनिया</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:#f7f4f1;color:#222}
+header{background:linear-gradient(135deg,#7b1e3a,#d45b35);color:#fff;padding:28px 18px;text-align:center}
+header h1{margin:0;font-size:34px}header p{margin:8px 0 0}
+nav{background:#fff;padding:12px;display:flex;gap:8px;overflow:auto;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0001}
+nav button{border:0;border-radius:20px;padding:9px 14px;background:#f0e8e5;white-space:nowrap;cursor:pointer}
+nav button.active{background:#7b1e3a;color:#fff}
+main{max-width:900px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border-radius:18px;margin:16px 0;padding:22px;box-shadow:0 5px 18px #00000012}
+.quote{font-size:22px;line-height:1.75;text-align:center;white-space:pre-line}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:18px}
+.actions button{border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-size:15px}
+.share{background:#7b1e3a;color:#fff}.download{background:#eee}
+footer{text-align:center;padding:30px;color:#777}
+.watermark{font-size:12px;text-align:right;color:#999;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>शायरी दुनिया</h1>
+  <p>हर एहसास के लिए एक शायरी ❤️</p>
+</header>
+<nav id="cats">
+  <button class="active" onclick="filter('all',this)">सभी</button>
+  <button onclick="filter('love',this)">प्यार</button>
+  <button onclick="filter('sad',this)">दर्द</button>
+  <button onclick="filter('attitude',this)">Attitude</button>
+  <button onclick="filter('bhakti',this)">भक्ति</button>
+  <button onclick="filter('dosti',this)">दोस्ती</button>
+  <button onclick="filter('motivation',this)">Motivation</button>
+</nav>
+<main id="list"></main>
+<footer>© 2026 शायरी दुनिया</footer>
+<script>
+const posts=[
+ {cat:"bhakti",text:"मैंने तो सिर्फ़ भरोसा किया था, ‘माधव’…\nधोखा देना है या रिश्ता निभाना,\nये तो लोगों की फ़ितरत जाने।"},
+ {cat:"love",text:"प्यार सिर्फ़ पाने का नाम नहीं,\nकिसी की खुशी में शामिल होना भी प्यार है।"},
+ {cat:"attitude",text:"हम अपनी पहचान खुद बनाते हैं,\nलोगों की राय से अपना कद नहीं नापते।"},
+ {cat:"sad",text:"कुछ रिश्ते सवाल नहीं करते,\nबस ख़ामोशी में अपना जवाब दे जाते हैं।"},
+ {cat:"dosti",text:"दोस्ती वो नहीं जो हर वक्त साथ हो,\nदोस्ती वो है जो दूर रहकर भी दिल के पास हो।"},
+ {cat:"motivation",text:"रास्ते मुश्किल हों तो क्या,\nहौसला हो तो मंज़िल दूर नहीं।"}
+];
+function esc(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function render(items){
+ document.getElementById("list").innerHTML=items.map((p,i)=>`
+ <article class="card">
+   <div class="quote">${esc(p.text)}</div>
+   <div class="watermark">शायरी दुनिया</div>
+   <div class="actions">
+     <button class="share" onclick="sharePost(${i})">📤 Share</button>
+     <button class="download" onclick="downloadPost(${i})">⬇️ Download</button>
+   </div>
+ </article>`).join("");
+}
+function filter(cat,btn){
+ document.querySelectorAll("#cats button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");
+ render(cat==="all"?posts:posts.filter(p=>p.cat===cat));
+}
+async function sharePost(i){
+ const text=posts[i].text+"\\n\\n— शायरी दुनिया";
+ if(navigator.share){try{await navigator.share({title:"शायरी दुनिया",text});}catch(e){}}
+ else{await navigator.clipboard.writeText(text);alert("शायरी कॉपी हो गई।");}
+}
+function downloadPost(i){
+ const c=document.createElement("canvas"),ctx=c.getContext("2d");
+ c.width=1080;c.height=1080;
+ ctx.fillStyle="#fffaf7";ctx.fillRect(0,0,c.width,c.height);
+ ctx.fillStyle="#7b1e3a";ctx.font="bold 42px Arial";ctx.textAlign="center";ctx.fillText("शायरी दुनिया",540,130);
+ ctx.fillStyle="#222";ctx.font="34px Arial";let y=380;
+ posts[i].text.split("\\n").forEach(line=>{ctx.fillText(line,540,y);y+=70;});
+ ctx.fillStyle="#999";ctx.font="24px Arial";ctx.fillText("शायरी दुनिया • Watermark",540,970);
+ const a=document.createElement("a");a.download="shayari-duniya.png";a.href=c.toDataURL("image/png");a.click();
+}
+render(posts);
+</script>
+</body>
+</html>
